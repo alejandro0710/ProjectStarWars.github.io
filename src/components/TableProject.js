@@ -1,19 +1,37 @@
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
-import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button } from "@material-ui/core";
+import {
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Button,
+} from "@material-ui/core";
 import { ContextProject } from "../hooks/Context";
 import { useContext } from "react";
 
 const useStyles = makeStyles({
-  root: {
+  ContentTable: {
     width: "100%",
     height: "300px",
     overflowX: "auto",
     padding: "5px",
     background: "white",
-  },
-  table: {
-    minWidth: 650,
+    "& .ContentTable__table": {
+      minWidth: 650,
+    },
+    "& .ContentTable__table-head": {
+      minWidth: (props) => (props.isSmallScreen ? 50 : 100),
+    },
+    "& .ContentTable__button-view-details": {
+      marginRight: 5,
+    },
+    "& .ContentTable__button--save": {
+      marginLeft: 5,
+    },
   },
 });
 
@@ -25,15 +43,15 @@ function TableProject() {
     setSavedProfile,
     setShowDetails,
     setFilter,
-    setView
+    setView,
   } = useContext(ContextProject);
-  const classes = useStyles();
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+  const classes = useStyles({ isSmallScreen });
 
   const handleSave = (person) => {
-    setFilter(false)
-    setView(false)
+    setFilter(false);
+    setView(false);
     setSavedProfile([...savedProfile, person]);
     setSearchResponse(
       searchResponse.filter((result) => result.name !== person.name)
@@ -42,47 +60,31 @@ function TableProject() {
 
   const columns = [
     {
-      id: "Name",
+      id: 0,
       label: "Name",
-      minWidth: isSmallScreen ? 50 : 90,
-      align: "lefth",
-      format: (value) => value.toLocaleString("en-US"),
     },
     {
-      id: "Gender",
+      id: 1,
       label: "Gender",
-      minWidth: isSmallScreen ? 50 : 100,
-      align: "lefth",
-      format: (value) => value.toLocaleString("en-US"),
     },
     {
-      id: "Birth year",
+      id: 2,
       label: "Birth year",
-      minWidth: isSmallScreen ? 50 : 100,
-      align: "lefth",
-      format: (value) => value.toLocaleString("en-US"),
     },
     {
-      id: "Eye color",
+      id: 3,
       label: "Eye color",
-      minWidth: isSmallScreen ? 50 : 100,
-      align: "lefth",
-      format: (value) => value.toLocaleString("en-US"),
     },
   ];
 
   return (
-    <div className={classes.root}>
+    <div className={classes.ContentTable}>
       <TableContainer component={Paper}>
-        <Table className={classes.table} aria-label="simple table">
+        <Table className="ContentTable__table" aria-label="simple table">
           <TableHead>
             <TableRow>
               {columns.map((column) => (
-                <TableCell
-                  key={column.id}
-                  align={column.align}
-                  style={{ minWidth: column.minWidth }}
-                >
+                <TableCell key={column.id} className="ContentTable__table-head">
                   <h3>{column.label}</h3>
                 </TableCell>
               ))}
@@ -97,7 +99,7 @@ function TableProject() {
                 <TableCell>{character.eye_color}</TableCell>
                 <TableCell>
                   <Button
-                    style={{ marginRight: "5px" }}
+                    className="ContentTable__button-show-details"
                     size="small"
                     variant="contained"
                     onClick={() =>
@@ -119,6 +121,7 @@ function TableProject() {
                     Show details
                   </Button>
                   <Button
+                    className="ContentTable__button--save"
                     size="small"
                     variant="contained"
                     color="primary"
@@ -132,7 +135,7 @@ function TableProject() {
           </TableBody>
         </Table>
       </TableContainer>
-      <br/>
+      <br />
     </div>
   );
 }
