@@ -4,14 +4,14 @@ import SearchProfile from "../components/SearchProfile";
 import Sidebar from "./Sidebar";
 
 const useStyles = makeStyles({
-    Main: {
-        display: "flex",
-        width: "min(100% - 1em, 75em)",
-        marginInline: "auto",
-        justifyContent: "space-between",
-        padding: "0px 25px",
-    }
-  });
+  Main: {
+    display: "flex",
+    width: "min(100% - 1em, 75em)",
+    marginInline: "auto",
+    justifyContent: "space-between",
+    padding: "0px 25px",
+  },
+});
 
 const Main = () => {
   const classes = useStyles();

@@ -4,9 +4,9 @@ import Header from "./containers/Header";
 import { makeStyles } from "@material-ui/core";
 
 const useStyles = makeStyles({
-  body: {
-    background: "#353a3e"
-  }
+  Projectbody: {
+    background: "#353a3e",
+  },
 });
 
 function App() {
@@ -14,7 +14,7 @@ function App() {
 
   return (
     <ContextProjectProvider className="App">
-      <body className={classes.body}>
+      <body className={classes.Projectbody}>
         <Header />
         <Main />
       </body>

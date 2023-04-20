@@ -13,14 +13,14 @@ import {
 } from "@material-ui/core";
 
 const useStyles = makeStyles({
-  Section: {
+  SearchProfile: {
     padding: "10px",
     width: "min(100% - 1em, 60em)",
-    "& .div": {
+    "& .search-profile__form": {
       padding: "15px",
       background: "white",
     },
-    "& .button": {
+    "& .search-profile__form-button": {
       marginLeft: "5px",
       height: "40px",
     },
@@ -41,8 +41,8 @@ function SearchProfile() {
   }, [searchResponse]);
 
   return (
-    <section className={classes.Section}>
-      <div className="div">
+    <section className={classes.SearchProfile}>
+      <div className="search-profile__form">
         <Typography variant="h4">Search people</Typography>
         <br />
         <TextField
@@ -52,7 +52,7 @@ function SearchProfile() {
           onChange={(e) => setSearchData(e.target.value)}
         />
         <Button
-          className="button"
+          className="search-profile__form-button"
           variant="contained"
           color="primary"
           disabled={loading}
@@ -61,7 +61,7 @@ function SearchProfile() {
             handleClick();
           }}
         >
-          {loading ? <CircularProgress size={24} color="primary" /> : "Cargar"}
+          {loading ? <CircularProgress size={24} color="primary" /> : "Search"}
         </Button>
       </div>
       <TableProject />
