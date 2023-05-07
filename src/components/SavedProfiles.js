@@ -1,46 +1,55 @@
-/* eslint-disable jsx-a11y/alt-text */
+/* eslint-disable no-undef */
 import {
   Button,
   Card,
   CardActions,
   CardContent,
-  makeStyles,
   Typography,
 } from "@material-ui/core";
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { ContextProject } from "../hooks/Context";
 import ProfileFilter from "./ProfileFilter";
+import styled from "styled-components";
 
-const useStyles = makeStyles({
-  SavedProfiles: {
-    background: "white",
-    padding: "10px",
-    "& .savedProfiles__characters": {
-      display: "flex",
-      flexWrap: "wrap",
-      marginTop: "20px",
-    },
-    "& .savedProfiles__card-profiles": {
-      margin: 5,
-    },
-    "& .savedProfiles__image-profile": {
-      width: 150,
-      height: 150,
-      objectFit: "contain",
-    },
-    "& .savedProfiles__card-content": {
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-    },
-  },
-  cardSx: {
-    minWidth: 200,
-  },
-});
+const SavedProfilesWrapper = styled.section`
+  background-color: white;
+  padding: 10px 10px 40px 10px;
+
+  & .savedProfiles__title {
+    margin-bottom: 20px;
+  }
+
+  & .savedProfiles__characters {
+    display: flex;
+    justify-content: ${(props) => (props.widthView <= 1050 ? "center" : null)};
+    flex-wrap: wrap;
+    margin-top: 20px;
+  }
+
+  & .savedProfiles__card-profiles {
+    margin: 5px;
+    width: 260px;
+  }
+
+  & .savedProfiles__image-profile {
+    width: 100%;
+    height: 260px;
+    object-fit: cover;
+  }
+
+  & .savedProfiles__card-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+  }
+`;
+
+const CardSx = styled(Card)`
+  min-width: 200px;
+`;
 
 const SavedProfiles = () => {
-  const classes = useStyles();
   const {
     savedProfile,
     setSavedProfile,
@@ -48,21 +57,39 @@ const SavedProfiles = () => {
     filter,
     view,
     setView,
+    savedCharacters,
+    setSavedCharacters,
+    scrollToBottom,
+    widthView,
   } = useContext(ContextProject);
 
-  const [data, setData] = useState(savedProfile);
-  const [filteredData, setFilteredData] = useState(data);
+  const [data, setData] = useState([...savedProfile]);
+  const [filteredData, setFilteredData] = useState([...savedProfile]);
 
   const handleRemove = (index) => {
     const deleteProfile = [...savedProfile];
     deleteProfile.splice(index, 1);
     setSavedProfile(deleteProfile);
+    const newFilteredData = filteredData.filter(
+      (profile) => profile.name !== deleteProfile[index].name
+    );
+    setFilteredData(newFilteredData);
   };
 
   const handleRemoveFilter = (index) => {
-    const deleteFilter = [...filteredData];
-    deleteFilter.splice(index, 1);
-    setFilteredData(deleteFilter);
+    const deletedProfile = savedProfile[index];
+    const newSavedCharacters = savedCharacters.filter(
+      (profile) => profile.url !== deletedProfile.url
+    );
+    setSavedCharacters(newSavedCharacters);
+    const newSavedProfile = savedProfile.filter(
+      (profile) => profile.url !== deletedProfile.url
+    );
+    setSavedProfile(newSavedProfile);
+    const newFilteredData = filteredData.filter(
+      (profile) => profile.url !== deletedProfile.url
+    );
+    setFilteredData(newFilteredData);
   };
 
   useEffect(() => {
@@ -70,7 +97,7 @@ const SavedProfiles = () => {
   }, [savedProfile]);
 
   useEffect(() => {
-    if (filteredData === []) {
+    if (filteredData.length === 0) {
       setView(false);
     } else if (filteredData !== [{}]) {
       setView(true);
@@ -78,42 +105,33 @@ const SavedProfiles = () => {
   }, [filteredData, setView]);
 
   return (
-    <section className={classes.SavedProfiles}>
-      <Typography variant="h4">Saved people</Typography>
-      <br />
+    <SavedProfilesWrapper widthView={widthView}>
+      <Typography className="savedProfiles__title" variant="h4">Saved people</Typography>
       <ProfileFilter data={data} setFilteredData={setFilteredData} />
       <div className="savedProfiles__characters">
         {view &&
           filteredData.map((person, index) => (
             <Card
               key={person.name}
-              sx={classes.cardSx}
+              sx={CardSx}
               className="savedProfiles__card-profiles"
             >
+              <img
+                className="savedProfiles__image-profile"
+                src={`https://starwars-visualguide.com/assets/img/characters/${
+                  person.url.match(/(\d+)/)[0]
+                }.jpg`}
+                title={person.name}
+              />
               <CardContent className="savedProfiles__card-content">
-                <img
-                  className="savedProfiles__image-profile"
-                  src={`https://starwars-visualguide.com/assets/img/characters/${
-                    person.url.match(/(\d+)/)[0]
-                  }.jpg`}
-                  title={person.name}
-                />
-                <Typography gutterBottom variant="h5" component="div">
+                <Typography variant="h5" component="div">
                   {person.name}
                 </Typography>
                 <CardActions>
                   <Button
                     size="small"
                     variant="contained"
-                    onClick={() => handleRemoveFilter(index)}
-                  >
-                    Remove
-                  </Button>
-                  <Button
-                    size="small"
-                    variant="contained"
-                    color="primary"
-                    onClick={() =>
+                    onClick={() => {
                       setShowDetails({
                         Image: `https://starwars-visualguide.com/assets/img/characters/${
                           person.url.match(/(\d+)/)[0]
@@ -126,10 +144,19 @@ const SavedProfiles = () => {
                         EyeColor: person.eye_color,
                         BirthYear: person.birth_year,
                         Gender: person.gender,
-                      })
-                    }
+                      });
+                      scrollToBottom();
+                    }}
                   >
-                    Hide details
+                    Show details
+                  </Button>
+                  <Button
+                    color="primary"
+                    size="small"
+                    variant="contained"
+                    onClick={() => handleRemoveFilter(index)}
+                  >
+                    Remove
                   </Button>
                 </CardActions>
               </CardContent>
@@ -139,33 +166,25 @@ const SavedProfiles = () => {
           savedProfile.map((person, index) => (
             <Card
               key={person.name}
-              sx={classes.cardSx}
+              sx={CardSx}
               className="savedProfiles__card-profiles"
             >
+              <img
+                className="savedProfiles__image-profile"
+                src={`https://starwars-visualguide.com/assets/img/characters/${
+                  person.url.match(/(\d+)/)[0]
+                }.jpg`}
+                title={person.name}
+              />
               <CardContent className="savedProfiles__card-content">
-                <img
-                  className="savedProfiles__image-profile"
-                  src={`https://starwars-visualguide.com/assets/img/characters/${
-                    person.url.match(/(\d+)/)[0]
-                  }.jpg`}
-                  title={person.name}
-                />
-                <Typography gutterBottom variant="h5" component="div">
+                <Typography variant="h5" component="div">
                   {person.name}
                 </Typography>
                 <CardActions>
                   <Button
                     size="small"
                     variant="contained"
-                    onClick={() => handleRemove(index)}
-                  >
-                    Remove
-                  </Button>
-                  <Button
-                    size="small"
-                    variant="contained"
-                    color="primary"
-                    onClick={() =>
+                    onClick={() => {
                       setShowDetails({
                         Image: `https://starwars-visualguide.com/assets/img/characters/${
                           person.url.match(/(\d+)/)[0]
@@ -178,17 +197,26 @@ const SavedProfiles = () => {
                         EyeColor: person.eye_color,
                         BirthYear: person.birth_year,
                         Gender: person.gender,
-                      })
-                    }
+                      });
+                      scrollToBottom();
+                    }}
                   >
-                    Hide details
+                    Show details
+                  </Button>
+                  <Button
+                    color="primary"
+                    size="small"
+                    variant="contained"
+                    onClick={() => handleRemove(index)}
+                  >
+                    Remove
                   </Button>
                 </CardActions>
               </CardContent>
             </Card>
           ))}
       </div>
-    </section>
+    </SavedProfilesWrapper>
   );
 };
 

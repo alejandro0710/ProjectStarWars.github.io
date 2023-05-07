@@ -1,44 +1,77 @@
-/* eslint-disable jsx-a11y/alt-text */
+import styled from "styled-components";
 import {
   Card,
   List,
   ListItem,
   ListItemText,
-  makeStyles,
   Typography,
 } from "@material-ui/core";
-import React, { useContext } from "react";
+import { useContext } from "react";
 import { ContextProject } from "../hooks/Context";
 
-const useStyles = makeStyles({
-  Aside: {
-    padding: "10px",
-    background: "white",
-    margin: "10px",
-    width: "min(100% - 1em, 30em)",
-    maxHeight: 730,
-    "& .aside__content-card-detail-profile": {
-      maxHeight: 710,
-      padding: 15,
-    },
-    "& .aside__content-image-profile": {
-      width: "100%",
-      height: 300,
-      objectFit: "contain",
-    },
-    "& .aside__content-info-profile": {
-      display: "flex",
-    },
-  },
-  dimensionsBodyList: {
-    width: "100%",
-    minWidth: 360,
-    bgcolor: "background.paper",
-  },
-});
+const Aside = styled.aside`
+  background: white;
+  margin: 10px;
+  width: min(100% - 1em, 20em);
+  max-height: 730px;
+  border-radius: 3px;
+
+  & .aside__content-title {
+    padding: 10px;
+  }
+
+  & .aside__content-title-list {
+    padding-left: 15px;
+  }
+
+  & .aside__content-card-detail-profile {
+    max-height: 710px;
+  }
+
+  & .aside__content-image-profile {
+    width: 100%;
+    height: 350px;
+    object-fit: cover;
+  }
+
+  & .aside__content-info-profile {
+    display: flex;
+    height: 20px;
+    span {
+      margin-left: 5px;
+    }
+  }
+
+  & .aside__content-card-list {
+    margin-top: -10px;
+  }
+
+  @media screen and (max-width: 1050px) {
+    width: 39.8em;
+
+    & .aside__content-card-detail-profile {
+      display: flex;
+    }
+  }
+
+  @media screen and (max-width: 740px) {
+    width: 93%;
+  }
+
+  @media screen and (max-width: 560px) {
+    width: 90%;
+    & .aside__content-card-detail-profile {
+      display: block;
+    }
+  }
+`;
+
+const DimensionsBodyList = styled(List)`
+  width: 100%;
+  min-width: 360px;
+`;
 
 const Sidebar = () => {
-  const classes = useStyles();
   const { showDetails } = useContext(ContextProject);
 
   const items = [
@@ -52,43 +85,46 @@ const Sidebar = () => {
   ];
 
   return (
-    <aside className={classes.Aside}>
+    <Aside>
+      <Typography variant="h5" className="aside__content-title">
+        Information about...
+      </Typography>
       {showDetails ? (
         <Card className="aside__content-card-detail-profile">
           <img
             className="aside__content-image-profile"
             src={showDetails.Image}
+            alt=""
           />
-          <ListItemText>
-            <h2>{showDetails.Name}</h2>
-          </ListItemText>
-          <List
-            sx={`${classes.dimensionsBodyList}`}
-            component="nav"
-            aria-label="mailbox folders"
-          >
-            {items.map((item, index) => (
-              <ListItem key={item.name} divider>
-                <ListItemText
-                  primary={
-                    <div className="aside__content-info-profile">
-                      <h4>{item.name}</h4>
-                      {item.value}
-                    </div>
-                  }
-                />
-              </ListItem>
-            ))}
-          </List>
+          <div>
+            <ListItemText>
+              <h2 className="aside__content-title-list">{showDetails.Name}</h2>
+            </ListItemText>
+            <DimensionsBodyList
+              component="nav"
+              className="aside__content-card-list"
+            >
+              {items.map((item) => (
+                <ListItem key={item.name} divider>
+                  <ListItemText
+                    primary={
+                      <div className="aside__content-info-profile">
+                        <h4>{item.name}</h4>
+                        <span>{item.value}</span>
+                      </div>
+                    }
+                  />
+                </ListItem>
+              ))}
+            </DimensionsBodyList>
+          </div>
         </Card>
       ) : (
-        <div>
-          <Typography variant="h5">Information about...</Typography>
-          <br />
+        <div className="aside__content-title">
           <Typography>Choose someone to get more information about!</Typography>
         </div>
       )}
-    </aside>
+    </Aside>
   );
 };
 

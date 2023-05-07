@@ -1,28 +1,34 @@
-import { Button, makeStyles } from "@material-ui/core";
-import React, { useContext } from "react";
+import { Button } from "@material-ui/core";
+import PropTypes from "prop-types";
+import { useContext, useState } from "react";
 import { ContextProject } from "../hooks/Context";
+import styled from "styled-components";
 
-const useStyles = makeStyles({
-  profileFilter__button: {
-    "& .profileFilter__button--all": {
-      backgroundColor: "#03cc03",
-      margin: "0 3px",
-    },
-    "& .profileFilter__button--male": {
-      backgroundColor: "#03a9f4",
-      margin: "0 3px",
-    },
-    "& .profileFilter__button--female": {
-      backgroundColor: "pink",
-      margin: "0 3px",
-    },
-  },
-});
+const ProfileFilterWrapper = styled.div`
+  & .profileFilter__button--all {
+    background-color: ${(props) =>
+      props.selectedButton === "all" ? "#514f4f" : "#979696"};
+    margin: 0 2px;
+    color: white;
+  }
+  & .profileFilter__button--male {
+    background-color: ${(props) =>
+      props.selectedButton === "male" ? "#514f4f" : "#979696"};
+    margin: 0 2px;
+    color: white;
+  }
+  & .profileFilter__button--female {
+    background-color: ${(props) =>
+      props.selectedButton === "female" ? "#514f4f" : "#979696"};
+    margin: 0 2px;
+    color: white;
+  }
+`;
 
-function ProfileFilter({ data, setFilteredData }) {
-  const classes = useStyles();
-
+function ProfileFilter(props) {
+  const { data, setFilteredData } = props;
   const { setFilter } = useContext(ContextProject);
+  const [selectedButton, setSelectedButton] = useState("all");
 
   const filterByGender = (gender) => {
     if (gender === "male") {
@@ -32,16 +38,17 @@ function ProfileFilter({ data, setFilteredData }) {
     } else {
       setFilteredData(data);
     }
+    setSelectedButton(gender);
   };
 
   return (
-    <div className={classes.profileFilter__button}>
+    <ProfileFilterWrapper selectedButton={selectedButton}>
       <Button
         className="profileFilter__button--all"
         size="small"
         variant="contained"
         onClick={() => {
-          filterByGender("All");
+          filterByGender("all");
           setFilter(true);
         }}
       >
@@ -69,8 +76,13 @@ function ProfileFilter({ data, setFilteredData }) {
       >
         Female
       </Button>
-    </div>
+    </ProfileFilterWrapper>
   );
 }
+
+ProfileFilter.propTypes = {
+  data: PropTypes.arrayOf(PropTypes.object).isRequired,
+  setFilteredData: PropTypes.func.isRequired,
+};
 
 export default ProfileFilter;

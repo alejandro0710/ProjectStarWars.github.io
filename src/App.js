@@ -13,7 +13,7 @@ function App() {
   const classes = useStyles();
 
   return (
-    <ContextProjectProvider className="App">
+    <ContextProjectProvider>
       <body className={classes.Projectbody}>
         <Header />
         <Main />
