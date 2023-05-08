@@ -72,16 +72,16 @@ const DimensionsBodyList = styled(List)`
 `;
 
 const Sidebar = () => {
-  const { showDetails } = useContext(ContextProject);
+  const { showDetails = {} } = useContext(ContextProject);
 
   const items = [
-    { name: "Height: ", value: `${showDetails.Height}` },
-    { name: "Mass: ", value: ` ${showDetails.Mass}` },
-    { name: "Hair color: ", value: `${showDetails.HairColor}` },
-    { name: "Skin color: ", value: `${showDetails.SkinColor}` },
-    { name: "Eye color: ", value: `${showDetails.EyeColor}` },
-    { name: "Birth year: ", value: `${showDetails.BirthYear}` },
-    { name: "Gender: ", value: `${showDetails.Gender}` },
+    { name: "Height: ", value: `${showDetails?.Height}` },
+    { name: "Mass: ", value: ` ${showDetails?.Mass}` },
+    { name: "Hair color: ", value: `${showDetails?.HairColor}` },
+    { name: "Skin color: ", value: `${showDetails?.SkinColor}` },
+    { name: "Eye color: ", value: `${showDetails?.EyeColor}` },
+    { name: "Birth year: ", value: `${showDetails?.BirthYear}` },
+    { name: "Gender: ", value: `${showDetails?.Gender}` },
   ];
 
   return (
